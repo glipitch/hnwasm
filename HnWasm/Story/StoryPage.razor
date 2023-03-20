@@ -1,0 +1,68 @@
+@page "/story/{Id:int?}"
+@page "/story/{Anything}"
+@using HnWasm.Navigation
+@using HnWasm.TopStories
+@inject NavigationService navigationService
+@inject TopStoriesCache topStoriesCache;
+@inject RestClient rest;
+@inject ErrorState errorState
+@if (story is not null)
+{
+    <PageTitle>@story.Title</PageTitle>
+    <h2 class="large-text">
+        <a class="title no-line" href=@(story?.Url ?? "story/"+@story?.Id)>@story?.Title</a>
+    </h2>
+    @if (story?.Url is not null)
+    {
+        <span class="small-text url">(@story.Url.UrlToHuman())</span>
+    }
+    <a class="small-text info hover-line" href="story/@story?.Id">
+        @story?.Score points by @story?.By @story?.Time?.UnixToHuman() ago @story?.Descendants comments
+    </a>
+    @if (story?.Text is not null)
+    {
+        <span class="small-text markup">@((MarkupString)story.Text)</span>
+    }
+    @if (kids is not null)
+    {
+        @foreach (var kid in kids)
+        {
+            <Comment Indent="0" Id=@kid />
+        }
+    }
+}
+@code {
+    [Parameter] public string? Anything { get; set; }
+    [Parameter] public int? Id { get; set; }
+    Item? story;
+    int[]? kids;
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is null && Anything is not null)
+        {
+            //parameter isn't int
+            errorState.SetError(true, resetUrl: true);
+            return;
+        }
+
+        if (Id is null)
+        {
+            errorState.SetError(true);
+            return;
+        }
+        
+        kids = null;
+        story = await rest.GetItem(Id.Value);
+        kids = story?.Kids;
+        if (story is null)
+        {
+            errorState.SetError(true);
+            return;
+        }
+        var stories = await topStoriesCache.Get();
+        var index = Array.FindIndex(stories!, item => item.Id == Id);
+        var previous = index <= 0 ? null : $"story/{stories![index - 1].Id}";
+        var next = index == -1 || index == stories!.Length - 1 ? null : $"story/{stories[index + 1].Id}";
+        navigationService.SetUrls(previous, next);
+    }
+}

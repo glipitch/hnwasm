@@ -1,0 +1,6 @@
+.error {
+    text-align: center;
+    color: var(--primary-text-color);
+    margin-top: 10rem;
+    margin-bottom: 10rem;
+}

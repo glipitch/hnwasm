@@ -1,0 +1,68 @@
+﻿@using HnWasm.Navigation
+@using System.Reflection
+@using System.Runtime.Versioning;
+@inject NavigationManager navigationManager
+@inherits LayoutComponentBase
+@inject NavigationService navigationService
+@implements IDisposable
+@inject ErrorState errorState;
+<Swiper LeftToRight="navigationService.LeftToRight"
+        RightToLeft="navigationService.RightToLeft" />
+<header>
+    <a href="" onclick=@(()=>Click()) @onclick:preventDefault tabindex="-1" class="no-line large-text logo">H</a>
+    <a class="title-container no-line" href="" onclick=@(()=>Click()) @onclick:preventDefault>
+        <h1 class="large-text">HN Wasm</h1>
+    </a>
+    <div class="settings">
+        @if (!errorState.IsError && !navigationManager.ToBaseRelativePath(navigationManager.Uri).StartsWith("story/", StringComparison.OrdinalIgnoreCase))
+        {
+            <Length />
+        }
+        <Theme />
+    </div>
+</header>
+<main>
+    @if (errorState.IsError)
+    {
+        <span class="error">
+            An error has occurred.
+        </span>
+        <a class="hover-line large-text retry" href="" @onclick:preventDefault="true" onclick=@(()=> Reset())>Reload</a>
+    }
+    else
+    {
+        <NavigationButtons />
+        @Body
+        <NavigationButtons />
+        <span class="version">@Version</span>
+    }
+</main>
+@code {
+    string Version => Assembly.GetEntryAssembly()!.GetCustomAttribute<TargetFrameworkAttribute>()!.FrameworkName;
+    void Click()
+    {
+        if (errorState.IsError)
+        {
+            Reset();
+        }
+        else
+        {
+            navigationManager.NavigateTo("", forceLoad: false);
+        }
+    }
+    void Reset()
+    {
+        if (errorState.ResetUrl)
+        {
+            errorState.SetError(false);
+            navigationManager.NavigateTo("", true);
+        }
+        errorState.SetError(false);
+
+    }
+    void Changed() => StateHasChanged();
+
+    protected override void OnInitialized() => errorState.OnChanged += Changed;
+
+    public void Dispose() => errorState.OnChanged -= Changed;
+}

@@ -1,0 +1,33 @@
+﻿.outer {
+    overflow-wrap: break-word;
+    margin-top: var(--medium-gap);
+}
+
+::deep pre {
+    overflow: auto;
+    padding: var(--small-gap);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.heading {
+    color: var(--secondary-text-color);
+    margin-bottom: var(--small-gap);
+}
+
+.expand {
+    color: var(--secondary-text-color);
+    cursor: pointer;
+}
+
+::deep a:link {
+    color: var(--secondary-text-color);
+}
+
+::deep a:visited {
+    color: var(--primary-text-color);
+}
+
+.markup {
+    color: var(--primary-text-color);
+}

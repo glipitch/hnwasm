@@ -1,0 +1,17 @@
+div {
+    text-align: center;
+    user-select: none;
+    padding-top: var(--large-gap);
+    padding-bottom: var(--large-gap);
+}
+
+a {
+    color: var(--primary-text-color);
+    padding-left: var(--large-gap);
+    padding-right: var(--large-gap);
+}
+
+    a[disabled] {
+        text-decoration: none;
+        color: var(--disabled-button-color);
+    }

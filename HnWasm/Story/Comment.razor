@@ -1,0 +1,46 @@
+@inject RestClient rest
+@if (goodData)
+{
+    <div class="outer" style="margin-left: calc(@(Indent) * var(--indent-unit));">
+        <div  class="heading small-text">
+            @comment?.By
+            @comment?.Time?.UnixToHuman() ago
+            <a class="hover-line expand" @onclick=@(()=>expanded = !expanded)>
+                [@(expanded ? "-" : $"{GetCount(this)} more")]
+            </a>
+        </div>
+        @if (expanded && comment is not null)
+        {
+            <span class="small-text markup">@((MarkupString)comment.Text!)</span>
+        }
+    </div>
+    @if (expanded && comment?.Kids is not null)
+    {
+        @foreach (var kid in comment.Kids)
+        {
+            <Comment Id=kid Indent=Indent+1 @ref=Ref />
+        }
+    }
+}
+@code {
+    [Parameter] public int Indent { get; set; }
+    [Parameter] public int Id { get; set; }
+    Comment? Ref { set => refs[value!.Id] = value; }
+    bool expanded = true, goodData = true;
+    
+    Item? comment;
+    Dictionary<int, Comment> refs = new();
+    int GetCount(Comment component) => component.refs.Values.Sum(GetCount) + 1;
+    protected override async Task OnParametersSetAsync()
+    {
+        if (comment is null)
+        {
+            refs.Clear();
+            comment = await rest.GetItem(Id);
+            if (comment?.Text is null)
+            {
+                goodData = false;
+            }
+        }
+    }
+}

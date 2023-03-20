@@ -1,0 +1,10 @@
+﻿.outer {
+    display: grid;
+    row-gap: var(--medium-gap);
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+.ordinal {
+    color: var(--secondary-text-color);
+    text-align: right;
+}

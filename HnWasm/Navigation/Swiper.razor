@@ -1,0 +1,72 @@
+﻿@using Microsoft.JSInterop
+@using System.Diagnostics
+@implements IAsyncDisposable
+@inject IJSRuntime js
+@code {
+    [Parameter] public EventCallback LeftToRight { get; set; }
+    [Parameter] public EventCallback RightToLeft { get; set; }
+    int sensitivity = 100;
+    double? startX, startY;
+    Stopwatch? sw;
+    IJSObjectReference? jsmodule;
+    DotNetObjectReference<Swiper>? dotNetReference;
+
+    [JSInvokable]
+    public void TouchStart(double startX, double startY)
+    {
+        sw = Stopwatch.StartNew();
+        this.startX = startX;
+        this.startY = startY;
+    }
+    [JSInvokable]
+    public void TouchEnd(double endX, double endY)
+    {
+        sw?.Stop();
+        if (sw?.ElapsedMilliseconds > 300 ||startX == null || startY == null)
+        {
+            startX = startY = null;
+            return;
+        }
+
+        var deltaX = startX.Value - endX;
+        var deltaY = startY.Value - endY;
+        
+        if (Math.Abs(deltaX) < sensitivity && Math.Abs(deltaY) < sensitivity)
+        {
+            startX = startY = null;
+            return;
+        }
+
+        if (Math.Abs(deltaX) > Math.Abs(deltaY))
+        {
+            if (deltaX > 0)
+            {
+                RightToLeft.InvokeAsync();
+            }
+            else
+            {
+                LeftToRight.InvokeAsync();
+            }
+        }
+        startX = startY = null;
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            jsmodule = await js.InvokeAsync<IJSObjectReference>("import", "./Navigation/Swiper.razor.js");
+            dotNetReference = DotNetObjectReference.Create(this);
+            await jsmodule.InvokeVoidAsync("attach", dotNetReference);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (jsmodule is not null)
+        {
+            await jsmodule.InvokeVoidAsync("detach");
+            await jsmodule.DisposeAsync();
+        }
+        dotNetReference?.Dispose();
+    }
+}

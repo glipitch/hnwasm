@@ -1,0 +1,22 @@
+﻿h2 {
+    font-weight: normal;
+    color: var(--primary-text-color);
+    word-break: break-word;
+    display: inline;
+}
+
+a:visited h2 {
+    color: var(--secondary-text-color);
+}
+
+.url {
+    color: var(--secondary-text-color);
+    padding-left: var(--small-gap);
+}
+
+.info {
+    padding-top: var(--small-gap);
+    width: fit-content;
+    color: var(--secondary-text-color);
+    display: block;
+}

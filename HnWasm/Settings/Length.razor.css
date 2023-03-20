@@ -1,0 +1,8 @@
+﻿button {
+    color: var(--primary-text-color);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit
+}

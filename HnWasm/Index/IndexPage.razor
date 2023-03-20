@@ -1,0 +1,66 @@
+﻿@page "/"
+@page "/{Page:int}"
+@page "/{*Anything}"
+@using HnWasm.Navigation;
+@using HnWasm.TopStories;
+@inject NavigationManager navigationManager
+@inject LengthProvider lengthProvider;
+@inject TopStoriesCache topStoriesCache;
+@inject NavigationService navigationService
+@inject ErrorState errorState
+@if (Items is not null)
+{
+    <div class="outer">
+        @if (Items is not null)
+        {
+            @foreach (var item in Items)
+            {
+                <span class="ordinal large-text">@item.Ordinal.</span>
+                <IndexStoryItemHeading Id=@item.Id />
+            }
+        }
+    </div>
+}
+@code {
+    IEnumerable<IndexItem>? Items;
+    [Parameter] public int? Page { get; set; }
+    [Parameter] public string? Anything { get; set; }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Page is null && Anything is not null)
+        {
+            //parameter isn't int
+            errorState.SetError(true, resetUrl: true);
+            return;
+        }
+        var pageAsInt = Page ?? 1;
+        if (pageAsInt < 1)
+        {
+            //redirect to first page
+            navigationManager.NavigateTo("");
+            return;
+        }
+        var itemsPerPage = await lengthProvider.Get();
+        var stories = await topStoriesCache.Get();
+        var lastPage = GetHighestPage(stories!.Length, itemsPerPage);
+        if (pageAsInt > lastPage)
+        {
+            //redirect to last page
+            navigationManager.NavigateTo(lastPage.ToString());
+            return;
+        }
+        Items = stories!
+            .Skip((pageAsInt - 1) * itemsPerPage)
+            .Take(itemsPerPage);
+        navigationService.SetUrls(GetPreviousUrl(pageAsInt), GetNextUrl(pageAsInt, lastPage));
+    }
+
+    static int GetHighestPage(int storiesLength, int itemsPerPage) => (storiesLength + itemsPerPage - 1) / itemsPerPage;
+    static string? GetPreviousUrl(int page) => page switch
+    {
+        1 => null,
+        2 => "",
+        _ => (page - 1).ToString(),
+    };
+    string? GetNextUrl(int pageAsInt, int lastPage) => pageAsInt == lastPage ? null : (pageAsInt + 1).ToString();
+}

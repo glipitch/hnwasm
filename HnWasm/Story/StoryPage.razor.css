@@ -1,0 +1,45 @@
+﻿.markup {
+    /*consider primary text color
+        it will differ from the HN, but
+        brings attention to the actual
+        text of the story if present
+    */
+    color: var(--secondary-text-color);
+    display: inline-block;
+    margin-top: var(--large-gap);
+}
+
+    .markup ::deep a:link {
+        color: var(--primary-text-color);
+    }
+
+    .markup ::deep a:visited {
+        color: var(--secondary-text-color);
+    }
+
+.title {
+    display: inline-block;
+    color: var(--primary-text-color);
+}
+
+h2 {
+    font-weight: normal;
+    display: inline;
+    word-break: break-word;
+}
+
+    h2 a:visited {
+        color: var(--secondary-text-color);
+    }
+
+.url {
+    color: var(--secondary-text-color);
+    padding-left: var(--small-gap);
+}
+
+.info {
+    padding-top: var(--small-gap);
+    width: fit-content;
+    color: var(--secondary-text-color);
+    display: block;
+}
