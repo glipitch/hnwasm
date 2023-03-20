@@ -1,0 +1,84 @@
+:root {
+    --small-text: .8rem;
+    --large-text: 1rem;
+    --large-gap: var(--large-text);
+    --medium-gap: calc(.5*var(--large-gap));
+    --small-gap: calc(.25*var(--large-gap));
+    --indent-unit: var(--large-gap);
+}
+
+    :root[data-theme="dark"] {
+        --primary-text-color: #EEEEEE;
+        --secondary-text-color: #999999;
+        --outer-background-color: #101114;
+        --main-background-color: #1c1d22;
+        --header-background-color: #2e3038;
+        --logo-color: var(--primary-text-color);
+        --disabled-button-color: dimgray;
+    }
+
+    :root[data-theme="light"] {
+        --primary-text-color: black;
+        --secondary-text-color: #828282;
+        --outer-background-color: white;
+        --main-background-color: #f6f6ef;
+        --header-background-color: #ff6600;
+        --logo-color: var(--outer-background-color);
+        --disabled-button-color: dimgray;
+    }
+
+.small-text {
+    font-size: var(--small-text);
+}
+
+.large-text {
+    font-size: var(--large-text);
+}
+
+body {
+    background-color: var(--outer-background-color);
+    margin: auto;
+    max-width: 60rem;
+}
+
+.no-line, .hover-line {
+    text-decoration: none;
+}
+
+@media(hover: hover) and (pointer: fine) {
+    /*desktop*/
+    .hover-line:hover {
+        text-decoration: underline;
+    }
+}
+
+#blazor-error-ui {
+    background-color: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+    #blazor-error-ui .reload {
+        color: lawngreen;
+    }
+
+html {
+    font-family: Verdana, Geneva, sans-serif;
+    visibility: visible;
+    opacity: 1;
+    display: block;
+    scrollbar-gutter: stable;
+}

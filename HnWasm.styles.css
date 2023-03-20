@@ -1,0 +1,232 @@
+/* /App.razor.rz.scp.css */
+.error[b-z3u4vwcucg] {
+    text-align: center;
+    color: var(--primary-text-color);
+    margin-top: 10rem;
+    margin-bottom: 10rem;
+}
+/* /Index/IndexPage.razor.rz.scp.css */
+.outer[b-2kc09or079] {
+    display: grid;
+    row-gap: var(--medium-gap);
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+.ordinal[b-2kc09or079] {
+    color: var(--secondary-text-color);
+    text-align: right;
+}
+/* /Index/IndexStoryItemHeading.razor.rz.scp.css */
+h2[b-geawl27nfz] {
+    font-weight: normal;
+    color: var(--primary-text-color);
+    word-break: break-word;
+    display: inline;
+}
+
+a:visited h2[b-geawl27nfz] {
+    color: var(--secondary-text-color);
+}
+
+.url[b-geawl27nfz] {
+    color: var(--secondary-text-color);
+    padding-left: var(--small-gap);
+}
+
+.info[b-geawl27nfz] {
+    padding-top: var(--small-gap);
+    width: fit-content;
+    color: var(--secondary-text-color);
+    display: block;
+}
+/* /MainLayout.razor.rz.scp.css */
+header[b-c3lpln6389] {
+    display: flex;
+    background-color: var(--header-background-color);
+    padding: var(--small-gap);
+    align-items: center;
+}
+
+.logo[b-c3lpln6389] {
+    border: calc(.1*var(--large-text)) solid var(--logo-color);
+    min-width: var(--large-text);
+    height: var(--large-text);
+    color: var(--logo-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title-container[b-c3lpln6389] {
+    flex-grow: 1;
+}
+
+main[b-c3lpln6389] {
+    background-color: var(--main-background-color);
+    padding-left: var(--medium-gap);
+    padding-right: var(--medium-gap);
+}
+
+.error[b-c3lpln6389] {
+    padding-top: 5rem;
+    padding-bottom: 1rem;
+    display: block;
+    color: var(--secondary-text-color);
+    text-align: center;
+}
+
+.retry[b-c3lpln6389] {
+    display: block;
+    text-align: center;
+    color: var(--primary-text-color);
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+}
+
+h1[b-c3lpln6389] {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: var(--medium-gap);
+    color: var(--primary-text-color);
+}
+
+.settings[b-c3lpln6389] {
+    margin-left: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    column-gap: var(--medium-gap);
+    margin-right: var(--medium-gap);
+}
+
+.version[b-c3lpln6389] {
+    font-size: .5rem;
+    color: dimgray;
+}
+/* /Navigation/NavigationButtons.razor.rz.scp.css */
+div[b-7j38ma5j5u] {
+    text-align: center;
+    user-select: none;
+    padding-top: var(--large-gap);
+    padding-bottom: var(--large-gap);
+}
+
+a[b-7j38ma5j5u] {
+    color: var(--primary-text-color);
+    padding-left: var(--large-gap);
+    padding-right: var(--large-gap);
+}
+
+    a[disabled][b-7j38ma5j5u] {
+        text-decoration: none;
+        color: var(--disabled-button-color);
+    }
+/* /Settings/Length.razor.rz.scp.css */
+button[b-rxadvb3nnr] {
+    color: var(--primary-text-color);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit
+}
+/* /Settings/Theme.razor.rz.scp.css */
+svg[b-borjx9gxfq] {
+    cursor: pointer;
+    width: var(--large-text);
+    fill: var(--primary-text-color);
+    fill-rule: evenodd;
+    clip-rule: evenodd;
+    vertical-align: middle;
+}
+
+button[b-borjx9gxfq] {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.hidden[b-borjx9gxfq] {
+    visibility: hidden;
+}
+/* /Story/Comment.razor.rz.scp.css */
+.outer[b-4waiw4c7is] {
+    overflow-wrap: break-word;
+    margin-top: var(--medium-gap);
+}
+
+[b-4waiw4c7is] pre {
+    overflow: auto;
+    padding: var(--small-gap);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.heading[b-4waiw4c7is] {
+    color: var(--secondary-text-color);
+    margin-bottom: var(--small-gap);
+}
+
+.expand[b-4waiw4c7is] {
+    color: var(--secondary-text-color);
+    cursor: pointer;
+}
+
+[b-4waiw4c7is] a:link {
+    color: var(--secondary-text-color);
+}
+
+[b-4waiw4c7is] a:visited {
+    color: var(--primary-text-color);
+}
+
+.markup[b-4waiw4c7is] {
+    color: var(--primary-text-color);
+}
+/* /Story/StoryPage.razor.rz.scp.css */
+.markup[b-lfg58iq8z1] {
+    /*consider primary text color
+        it will differ from the HN, but
+        brings attention to the actual
+        text of the story if present
+    */
+    color: var(--secondary-text-color);
+    display: inline-block;
+    margin-top: var(--large-gap);
+}
+
+    .markup[b-lfg58iq8z1]  a:link {
+        color: var(--primary-text-color);
+    }
+
+    .markup[b-lfg58iq8z1]  a:visited {
+        color: var(--secondary-text-color);
+    }
+
+.title[b-lfg58iq8z1] {
+    display: inline-block;
+    color: var(--primary-text-color);
+}
+
+h2[b-lfg58iq8z1] {
+    font-weight: normal;
+    display: inline;
+    word-break: break-word;
+}
+
+    h2 a:visited[b-lfg58iq8z1] {
+        color: var(--secondary-text-color);
+    }
+
+.url[b-lfg58iq8z1] {
+    color: var(--secondary-text-color);
+    padding-left: var(--small-gap);
+}
+
+.info[b-lfg58iq8z1] {
+    padding-top: var(--small-gap);
+    width: fit-content;
+    color: var(--secondary-text-color);
+    display: block;
+}
