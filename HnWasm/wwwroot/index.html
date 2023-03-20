@@ -16,8 +16,7 @@
     <link rel="shortcut icon" href="favicon.ico">
     <title>HN Wasm</title>
     <base />
-    <script>
-        //https://blog.elmah.io/how-to-fix-blazor-wasm-base-path-problems/
+    <script>//https://blog.elmah.io/how-to-fix-blazor-wasm-base-path-problems/
         var path = window.location.pathname.split('/');
         var base = document.getElementsByTagName('base')[0];
         if (window.location.host.includes('localhost')) {
@@ -26,14 +25,11 @@
             base.setAttribute('href', '/' + path[1] + '/');
         } else if (path[path.length - 1].length != 0) {
             window.location.replace(window.location.origin + window.location.pathname + '/' + window.location.search);
-        }
-    </script>
+        }</script>
     <link href="app.css" rel="stylesheet" />
     <link href="HnWasm.styles.css" rel="stylesheet" />
-    <script>
-        setThemeData = value => document.documentElement.dataset.theme = value;
-        setThemeData(localStorage.getItem("theme") == "light" ? "light" : "dark");
-    </script>
+    <script>setThemeData = value => document.documentElement.dataset.theme = value;
+        setThemeData(localStorage.getItem("theme") == "light" ? "light" : "dark");</script>
 </head>
 <body>
     <div id="app">

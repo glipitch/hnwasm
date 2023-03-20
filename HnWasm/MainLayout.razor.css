@@ -56,6 +56,7 @@ h1 {
     column-gap: var(--medium-gap);
     margin-right: var(--medium-gap);
 }
+
 .version {
     font-size: .5rem;
     color: dimgray;
