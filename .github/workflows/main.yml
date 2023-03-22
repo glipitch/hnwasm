@@ -1,4 +1,4 @@
-name: Deploy Blazor WebAssembly to GitHub Pages
+name: Deploy to GitHub Pages
 on:
   workflow_dispatch:    
   push:
@@ -13,9 +13,9 @@ jobs:
       with:
         # https://github.com/actions/setup-dotnet#supported-version-syntax
         dotnet-version: '7.x'
-    - name: Publish .NET Core Project
+    - name: Publish
       run: dotnet publish HnWasm/HnWasm.csproj -c Release -o release --nologo
-    - name: copy index.html to 404.html
+    - name: Copy index.html to 404.html
       run: cp release/wwwroot/index.html release/wwwroot/404.html
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
