@@ -38,25 +38,17 @@
     int[]? kids;
     protected override async Task OnParametersSetAsync()
     {
-        if (Id is null && Anything is not null)
-        {
-            //parameter isn't int
-            errorState.SetError(true, resetUrl: true);
-            return;
-        }
-
         if (Id is null)
         {
-            errorState.SetError(true);
+            errorState.SetError(true,resetUrl:true);
             return;
         }
-        
         kids = null;
         story = await rest.GetItem(Id.Value);
         kids = story?.Kids;
         if (story is null)
         {
-            errorState.SetError(true);
+            errorState.SetError(true,resetUrl:true);
             return;
         }
         var stories = await topStoriesCache.Get();
