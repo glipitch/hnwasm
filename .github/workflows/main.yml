@@ -15,12 +15,8 @@ jobs:
         dotnet-version: '7.x'
     - name: Publish
       run: dotnet publish HnWasm/HnWasm.csproj -c Release -o release --nologo
-    - name: Change base href
-      working-directory: HnWasm
-      run: |
-        find . -name "*.html" | while read htmlFile; do
-            sed -i 's/<base href="\/"/<base href="\/HnWasm\/"/g' $htmlFile
-        done
+    - name: Change base href in index.html
+      run: sed -i ‘s/<base href=”\/” \/>/<base href=”\/HnWasm\/” \/>/g’ release/wwwroot/index.html
     - name: Copy index.html to 404.html
       run: cp release/wwwroot/index.html release/wwwroot/404.html
     - name: Add .nojekyll file
