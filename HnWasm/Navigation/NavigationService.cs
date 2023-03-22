@@ -13,16 +13,16 @@ internal class NavigationService
         this.navigationManager = navigationManager;
     }
 
-    internal event Action<string?, string?>? UrlsSet;
+    public event Action<string?, string?>? UrlsSet;
 
-    internal void SetUrls(string? previous, string? next)
+    public void SetUrls(string? previous, string? next)
     {
         this.previous = previous;
         this.next = next;
         UrlsSet?.Invoke(previous, next);
     }
 
-    internal void RightToLeft()
+    public void RightToLeft()
     {
         if (next != null)
         {
@@ -31,7 +31,7 @@ internal class NavigationService
         }
     }
 
-    internal void LeftToRight()
+    public void LeftToRight()
     {
         if (previous != null)
         {

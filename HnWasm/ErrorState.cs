@@ -2,12 +2,12 @@
 
 internal class ErrorState
 {
-    internal Action? OnChanged;
+    public Action? OnChanged;
 
     public bool ResetUrl { get; private set; }
-    internal bool IsError { get; private set; }
+    public bool IsError { get; private set; }
 
-    internal void SetError(bool isError, bool resetUrl = false)
+    public void SetError(bool isError, bool resetUrl = false)
     {
         if (IsError == isError)
         {

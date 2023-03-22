@@ -8,13 +8,13 @@ internal class ThemeProvider
 
     public ThemeProvider(IJSRuntime js) => this.js = js;
 
-    internal async Task<string?> Get()
+    public async Task<string?> Get()
     {
         var theme = await js.InvokeAsync<string?>("localStorage.getItem", "theme");
         return theme == "light" ? "light" : "dark";
     }
 
-    internal async Task<string?> Next(string? original)
+    public async Task<string?> Next(string? original)
     {
         var next = original == "light" ? "dark" : "light";
         await js.InvokeVoidAsync("setThemeData", next);

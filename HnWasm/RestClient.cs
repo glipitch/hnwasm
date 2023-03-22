@@ -13,7 +13,7 @@ internal class RestClient
         this.errorState = errorState;
     }
 
-    internal async Task<int[]?> GetTopStories()
+    public async Task<int[]?> GetTopStories()
     {
         try
         {
@@ -27,7 +27,7 @@ internal class RestClient
         }
     }
 
-    internal async Task<Item?> GetItem(int id)
+    public async Task<Item?> GetItem(int id)
     {
         try
         {

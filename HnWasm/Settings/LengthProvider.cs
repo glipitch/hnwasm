@@ -11,7 +11,7 @@ internal class LengthProvider
     const int defaultValue = 10;
     static readonly int[] values = new int[] { 10, 25, 50 };
 
-    internal async Task<int> Get()
+    public async Task<int> Get()
     {
         var text = await js.InvokeAsync<string?>("localStorage.getItem", "length");
         if (text is not null && int.TryParse(text, out var number) && values.Contains(number))
@@ -21,7 +21,7 @@ internal class LengthProvider
         return defaultValue;
     }
 
-    internal async Task Next(int current)
+    public async Task Next(int current)
     {
         var index = Array.IndexOf(values, current);
         var next = index < values.Length - 1 ? values[index + 1] : values[0];

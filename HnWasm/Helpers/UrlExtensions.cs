@@ -1,6 +1,6 @@
 ﻿namespace HnWasm.Helpers;
 
-public static class UrlExtensions
+internal static class UrlExtensions
 {
     public static string UrlToHuman(this string url)
     {

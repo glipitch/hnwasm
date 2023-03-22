@@ -10,7 +10,7 @@ internal class TopStoriesCache
         this.rest = rest;
     }
 
-    internal async Task<IndexItem[]?> Get()
+    public async Task<IndexItem[]?> Get()
     {
         if (stories == null)
         {

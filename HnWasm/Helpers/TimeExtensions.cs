@@ -1,14 +1,10 @@
-﻿using System.Runtime.CompilerServices;
+﻿namespace HnWasm.Helpers;
 
-[assembly: InternalsVisibleTo("HnWasmTest")]
-
-namespace HnWasm.Helpers;
-
-public static class TimeExtensions
+internal static class TimeExtensions
 {
-    internal static string UnixToHuman(this int unixSeconds) => DateTimeOffset.FromUnixTimeSeconds(unixSeconds).Elapsed().TimespanToHuman();
+    public static string UnixToHuman(this int unixSeconds) => DateTimeOffset.FromUnixTimeSeconds(unixSeconds).Elapsed().TimespanToHuman();
 
-    internal static string TimespanToHuman(this TimeSpan age)
+    public static string TimespanToHuman(this TimeSpan age)
     {
         const double daysInYear = 365.2425;
         const double daysInMonth = daysInYear / 12;
