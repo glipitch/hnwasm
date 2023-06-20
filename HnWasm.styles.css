@@ -99,10 +99,14 @@ h1[b-c3lpln6389] {
     margin-right: var(--medium-gap);
 }
 
-.version[b-c3lpln6389] {
-    font-size: .5rem;
-    color: dimgray;
+.app-info[b-c3lpln6389] {
+    text-align: center;
 }
+
+    .app-info > *[b-c3lpln6389] {
+        font-size: .5rem;
+        color: dimgray;
+    }
 /* /Navigation/NavigationButtons.razor.rz.scp.css */
 div[b-7j38ma5j5u] {
     text-align: center;
