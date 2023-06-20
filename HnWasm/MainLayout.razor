@@ -35,7 +35,10 @@
         @Body
         <NavigationButtons />
     }
-    <span class="version">@Version</span>
+    <div class="app-info">
+        <a href="https://github.com/glipitch/hnwasm">github.com/glipitch/hnwasm</a>
+        <span>@Version</span>
+    </div>
 </main>
 @code {
     string Version => Assembly.GetEntryAssembly()!.GetCustomAttribute<TargetFrameworkAttribute>()!.FrameworkName;

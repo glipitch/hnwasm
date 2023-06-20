@@ -57,7 +57,11 @@ h1 {
     margin-right: var(--medium-gap);
 }
 
-.version {
-    font-size: .5rem;
-    color: dimgray;
+.app-info {
+    text-align: center;
 }
+
+    .app-info > * {
+        font-size: .5rem;
+        color: dimgray;
+    }
