@@ -34,8 +34,8 @@
         <NavigationButtons />
         @Body
         <NavigationButtons />
-        <span class="version">@Version</span>
     }
+    <span class="version">@Version</span>
 </main>
 @code {
     string Version => Assembly.GetEntryAssembly()!.GetCustomAttribute<TargetFrameworkAttribute>()!.FrameworkName;
@@ -58,11 +58,8 @@
             navigationManager.NavigateTo("", true);
         }
         errorState.SetError(false);
-
     }
     void Changed() => StateHasChanged();
-
     protected override void OnInitialized() => errorState.OnChanged += Changed;
-
     public void Dispose() => errorState.OnChanged -= Changed;
 }
