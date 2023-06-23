@@ -13,6 +13,9 @@ jobs:
       with:
         # https://github.com/actions/setup-dotnet#supported-version-syntax
         dotnet-version: '7.x'
+        # Install dotnet wasm buildtools workload
+    - name: Install .NET WASM Build Tools
+      run: dotnet workload install wasm-tools
     - name: Publish
       run: dotnet publish HnWasm/HnWasm.csproj -c Release -o release --nologo
     - name: Change base href in index.html
