@@ -4,14 +4,6 @@ on:
   push:
     branches: [ main ]
 jobs:
-  refresh-feed:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Fetch API Data 📦
-          uses: JamesIves/fetch-api-data-action@v2
-          with:
-            endpoint: https://symbol-search.tradingview.com/s/?text=BTCUSDT&hl=1&exchange=&lang=en&type=&domain=production&sort_by_country=US
-            configuration: '{ "method": "GET", "headers": {"Authorization": "Bearer ${{ secrets.API_TOKEN }}"} }'
   deploy-to-github-pages:
     runs-on: ubuntu-latest
     steps:
