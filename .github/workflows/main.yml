@@ -12,7 +12,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         # https://github.com/actions/setup-dotnet#supported-version-syntax
-        dotnet-version: '7.x'
+        dotnet-version: '8.x'
     - name: Install .NET wasm-tools
       run: dotnet workload install wasm-tools
     - name: Publish
