@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "HnWasm",
   "resources": {
-    "hash": "sha256-Y0BrZ1KL4FUC+RvXQOkZG8rPnM1tFF8ad/rnyh+o4NQ=",
+    "hash": "sha256-ADc7R82UfzZQ41dNNcRcKOaXtPwT5xUa6QQ8h1+6Q8o=",
     "jsModuleNative": {
       "dotnet.native.8.0.7.6koi5pl1nq.js": "sha256-6NNKKRtd8jvf1n+dXck0szsNBp1Jcpl40WGJDcReMA0="
     },
@@ -9,7 +9,7 @@
       "dotnet.runtime.8.0.7.3dp1i72u0p.js": "sha256-soZyw6XWXOLKhA26AOyzSpCP5cAsw1wvhdPHSYNTMfQ="
     },
     "wasmNative": {
-      "dotnet.native.wasm": "sha256-3j424KK2p0BhJa1XjamKZ9pGxWIhOtkO8eV2gd9+izI="
+      "dotnet.native.wasm": "sha256-EukL9YN1j9Uqxo21RAj+PXIgPeJH4xqNnpwQXis5UjQ="
     },
     "assembly": {
       "HnWasm.wasm": "sha256-OUdzbdm0T0syCQs0BzeNNCacXmbyliGw7J5m6mCR9pQ=",
