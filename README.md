@@ -1,5 +1,5 @@
 # HnWasm
 
-Hacker News clone in .NET 8 Blazor WebAssembly with themes. No dependencies.
+Hacker News clone in .NET 9 Blazor WebAssembly with themes, swipe on mobile, no dependencies.
 
 https://glipitch.github.io/hnwasm
