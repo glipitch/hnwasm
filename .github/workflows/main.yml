@@ -7,9 +7,9 @@ jobs:
   deploy-to-github-pages:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4.2.2
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v4.1.0
       with:
         # https://github.com/actions/setup-dotnet#supported-version-syntax
         dotnet-version: '10.x'
@@ -24,7 +24,7 @@ jobs:
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
     - name: Commit wwwroot to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4.6.3
+      uses: JamesIves/github-pages-deploy-action@v4.7.2
       with:
         BRANCH: gh-pages
         FOLDER: release/wwwroot
