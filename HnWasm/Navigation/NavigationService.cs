@@ -1,4 +1,5 @@
-﻿namespace HnWasm.Navigation;
+﻿using Microsoft.AspNetCore.Components;
+namespace HnWasm.Navigation;
 
 internal class NavigationService
 {
