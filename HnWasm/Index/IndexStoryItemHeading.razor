@@ -1,16 +1,13 @@
-@inject RestClient rest
 <div>
-    <a class="no-line" href=@(story?.Url ?? "story/"+story?.Id)><h2 class="large-text">@story?.Title</h2></a>
-    @if (story?.Url is not null)
+    <a class="no-line" href=@(Story.Url ?? "story/"+Story.Id)><h2 class="large-text">@Story.Title</h2></a>
+    @if (Story.Url is not null)
     {
-        <span class="small-text url">(@story.Url.UrlToHuman())</span>
+        <span class="small-text url">(@Story.Url.UrlToHuman())</span>
     }
-    <a class="small-text info hover-line" href="story/@story?.Id">
-        @story?.Score points by @story?.By @story?.Time?.UnixToHuman() ago @story?.Descendants comments
+    <a class="small-text info hover-line" href="story/@Story.Id">
+        @Story.Score points by @Story.By @Story.Time?.UnixToHuman() ago @Story.Descendants comments
     </a>
 </div>
 @code {
-    [Parameter] public int? Id { get; set; }
-    Item? story;
-    protected override async Task OnParametersSetAsync() => story = await rest.GetItem(Id!.Value);
+    [Parameter] public Item Story { get; set; } = null!;
 }

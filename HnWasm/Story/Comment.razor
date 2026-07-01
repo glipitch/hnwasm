@@ -1,46 +1,27 @@
-@inject RestClient rest
-@if (goodData)
+@if (CommentItem.Text is not null)
 {
     <div class="outer" style="margin-left: calc(@(Indent) * var(--indent-unit));">
-        <div  class="heading small-text">
-            @comment?.By
-            @comment?.Time?.UnixToHuman() ago
-            <a class="hover-line expand" @onclick=@(()=>expanded = !expanded)>
-                [@(expanded ? "-" : $"{GetCount(this)} more")]
-            </a>
+        <div class="heading small-text">
+            @CommentItem.By
+            @CommentItem.Time?.UnixToHuman() ago
+            @if (CommentItem.Kids is not null)
+            {
+                <a class="hover-line expand" @onclick="Toggle">
+                    [@(IsExpanded ? "-" : MoreText)]
+                </a>
+            }
         </div>
-        @if (expanded && comment is not null)
-        {
-            <span class="small-text markup">@((MarkupString)comment.Text!)</span>
-        }
+        <span class="small-text markup">@((MarkupString)CommentItem.Text)</span>
     </div>
-    @if (expanded && comment?.Kids is not null)
-    {
-        @foreach (var kid in comment.Kids)
-        {
-            <Comment Id=kid Indent=Indent+1 @ref=Ref />
-        }
-    }
 }
 @code {
     [Parameter] public int Indent { get; set; }
-    [Parameter] public int Id { get; set; }
-    Comment? Ref { set => refs[value!.Id] = value; }
-    bool expanded = true, goodData = true;
-    
-    Item? comment;
-    Dictionary<int, Comment> refs = new();
-    int GetCount(Comment component) => component.refs.Values.Sum(GetCount) + 1;
-    protected override async Task OnParametersSetAsync()
-    {
-        if (comment is null)
-        {
-            refs.Clear();
-            comment = await rest.GetItem(Id);
-            if (comment?.Text is null)
-            {
-                goodData = false;
-            }
-        }
-    }
+    [Parameter] public Item CommentItem { get; set; } = null!;
+    [Parameter] public bool IsExpanded { get; set; }
+    [Parameter] public int? MoreCount { get; set; }
+    [Parameter] public EventCallback<int> OnToggle { get; set; }
+
+    string MoreText => MoreCount is null ? "more" : $"{MoreCount} more";
+
+    Task Toggle() => OnToggle.InvokeAsync(CommentItem.Id);
 }

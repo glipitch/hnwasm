@@ -9,8 +9,8 @@
 <Swiper LeftToRight="navigationService.LeftToRight"
         RightToLeft="navigationService.RightToLeft" />
 <header>
-    <a href="" onclick=@(()=>Click()) @onclick:preventDefault tabindex="-1" class="no-line large-text logo">H</a>
-    <a class="title-container no-line" href="" onclick=@(()=>Click()) @onclick:preventDefault>
+    <a href="" @onclick="Click" @onclick:preventDefault tabindex="-1" class="no-line large-text logo">H</a>
+    <a class="title-container no-line" href="" @onclick="Click" @onclick:preventDefault>
         <h1 class="large-text">HN Wasm</h1>
     </a>
     <div class="settings">
@@ -27,7 +27,7 @@
         <span class="error">
             An error has occurred.
         </span>
-        <a class="hover-line large-text retry" href="" @onclick:preventDefault="true" onclick=@(()=> Reset())>Recover</a>
+        <a class="hover-line large-text retry" href="" @onclick:preventDefault="true" @onclick="Reset">Recover</a>
     }
     else
     {

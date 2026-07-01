@@ -3,20 +3,27 @@
 internal class TopStoriesCache
 {
     readonly RestClient rest;
-    IndexItem[]? stories;
+    Task<IndexItem[]?>? storiesTask;
 
     public TopStoriesCache(RestClient rest)
     {
         this.rest = rest;
     }
 
-    public async Task<IndexItem[]?> Get()
+    public Task<IndexItem[]?> Get()
     {
-        if (stories == null)
+        storiesTask ??= Fetch();
+        return storiesTask;
+    }
+
+    async Task<IndexItem[]?> Fetch()
+    {
+        var stories = await rest.GetTopStories();
+        if (stories is null)
         {
-            var newStories = await rest.GetTopStories();
-            stories = newStories!.Select((id, ordinal) => new IndexItem(id, ordinal + 1)).ToArray();
+            storiesTask = null;
+            return null;
         }
-        return stories;
+        return stories.Select((id, ordinal) => new IndexItem(id, ordinal + 1)).ToArray();
     }
 }

@@ -5,7 +5,8 @@ namespace HnWasm;
 internal class RestClient
 {
     readonly HttpClient client;
-    private readonly ErrorState? errorState;
+    readonly ErrorState errorState;
+    readonly Dictionary<int, Task<Item?>> itemTasks = new();
 
     public RestClient(HttpClient client, ErrorState errorState)
     {
@@ -22,21 +23,39 @@ internal class RestClient
         }
         catch
         {
-            errorState?.SetError(true);
+            errorState.SetError(true);
             return null;
         }
     }
 
-    public async Task<Item?> GetItem(int id)
+    public Task<Item?> GetItem(int id)
+    {
+        if (!itemTasks.TryGetValue(id, out var task))
+        {
+            task = FetchItem(id);
+            itemTasks[id] = task;
+        }
+        return task;
+    }
+
+    public void PrefetchItems(IEnumerable<int> ids)
+    {
+        foreach (var id in ids)
+        {
+            _ = GetItem(id);
+        }
+    }
+
+    async Task<Item?> FetchItem(int id)
     {
         try
         {
-            var result = await client.GetFromJsonAsync<Item>($"item/{id}.json");
-            return result;
+            return await client.GetFromJsonAsync<Item>($"item/{id}.json");
         }
         catch
         {
-            errorState?.SetError(true);
+            itemTasks.Remove(id);
+            errorState.SetError(true);
             return null;
         }
     }

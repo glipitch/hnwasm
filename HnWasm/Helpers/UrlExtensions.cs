@@ -4,8 +4,11 @@ internal static class UrlExtensions
 {
     public static string UrlToHuman(this string url)
     {
-        var uri = new Uri(url.ToLowerInvariant());
-        var host = uri.Host;
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            return url;
+        }
+        var host = uri.Host.ToLowerInvariant();
         if (host == "github.com" || host == "twitter.com")
         {
             var segments = uri.Segments;

@@ -1,7 +1,7 @@
 ﻿@inject NavigationManager navigationManager
 @inject LengthProvider lengthProvider
 
-<button class="large-text" aria-label="Length" onclick="@(async()=>await Click())">@value</button>
+<button class="large-text" aria-label="Length" @onclick="Click">@value</button>
 @code {
     int value;
     protected override async Task OnInitializedAsync()
@@ -9,9 +9,15 @@
         value = await lengthProvider.Get();
     }
     async Task Click()
-    {   //Next length value is calculated and saved to browser storage
-        //Return value not required here as value will be picked up on load
-        await lengthProvider.Next(value);
-        navigationManager.NavigateTo("", forceLoad: true);
+    {
+        value = await lengthProvider.Next(value);
+        if (string.IsNullOrEmpty(navigationManager.ToBaseRelativePath(navigationManager.Uri)))
+        {
+            lengthProvider.NotifyChanged();
+        }
+        else
+        {
+            navigationManager.NavigateTo("");
+        }
     }
 }

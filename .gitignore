@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local visual check output
+visual-check/
+release-check/
+edge-visual-debug/
+edge-cdp-profile*/
+error-probe-profile/
+render-probe/
+hnwasm-run.*.log

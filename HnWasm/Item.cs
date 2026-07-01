@@ -1,5 +1,5 @@
 ﻿namespace HnWasm;
-record Item(
+public record Item(
     string? By,
     int Id,
     int Descendants,

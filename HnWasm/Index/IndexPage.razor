@@ -8,25 +8,35 @@
 @inject TopStoriesCache topStoriesCache;
 @inject NavigationService navigationService
 @inject ErrorState errorState
+@inject RestClient rest
+@implements IDisposable
 @if (Items is not null)
 {
     <div class="outer">
-        @if (Items is not null)
+        @foreach (var item in loadedItems)
         {
-            @foreach (var item in Items)
-            {
-                <span class="ordinal large-text">@item.Ordinal.</span>
-                <IndexStoryItemHeading Id=@item.Id />
-            }
+            <span class="ordinal large-text">@item.Ordinal.</span>
+            <IndexStoryItemHeading Story=item.Story @key=item.Story.Id />
         }
     </div>
 }
 @code {
-    IEnumerable<IndexItem>? Items;
+    IndexItem[]? Items;
+    List<LoadedIndexItem> loadedItems = new();
+    int loadVersion;
     [Parameter] public int? Page { get; set; }
     [Parameter] public string? Anything { get; set; }
-    protected override async Task OnParametersSetAsync()
+
+    protected override void OnInitialized() => lengthProvider.Changed += LengthChanged;
+
+    protected override Task OnParametersSetAsync() => Load();
+
+    async Task Load()
     {
+        var version = ++loadVersion;
+        Items = null;
+        loadedItems.Clear();
+        navigationService.SetUrls(null, null);
         if (Page is null && Anything is not null)
         {
             //parameter isn't int
@@ -42,17 +52,73 @@
         }
         var itemsPerPage = await lengthProvider.Get();
         var stories = await topStoriesCache.Get();
-        var lastPage = GetHighestPage(stories!.Length, itemsPerPage);
+        if (stories is null)
+        {
+            return;
+        }
+        var lastPage = GetHighestPage(stories.Length, itemsPerPage);
         if (pageAsInt > lastPage)
         {
             //redirect to last page
             navigationManager.NavigateTo(lastPage.ToString());
             return;
         }
-        Items = stories!
-            .Skip((pageAsInt - 1) * itemsPerPage)
-            .Take(itemsPerPage);
+        Items = GetPageItems(stories, pageAsInt, itemsPerPage);
+        rest.PrefetchItems(Items.Select(item => item.Id));
+        _ = LoadItems(Items, version);
+        _ = PrefetchLater(GetPageItems(stories, pageAsInt + 1, itemsPerPage).Select(item => item.Id).ToArray());
         navigationService.SetUrls(GetPreviousUrl(pageAsInt), GetNextUrl(pageAsInt, lastPage));
+    }
+
+    void LengthChanged() => _ = InvokeAsync(async () =>
+    {
+        await Load();
+        StateHasChanged();
+    });
+
+    public void Dispose() => lengthProvider.Changed -= LengthChanged;
+
+    async Task LoadItems(IndexItem[] items, int version)
+    {
+        foreach (var indexItem in items)
+        {
+            if (version != loadVersion)
+            {
+                return;
+            }
+            var item = await rest.GetItem(indexItem.Id);
+            if (version != loadVersion)
+            {
+                return;
+            }
+            if (item is not null)
+            {
+                loadedItems.Add(new(indexItem.Ordinal, item));
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+    }
+
+    async Task PrefetchLater(int[] ids)
+    {
+        if (ids.Length == 0)
+        {
+            return;
+        }
+        await Task.Delay(500);
+        rest.PrefetchItems(ids);
+    }
+
+    static IndexItem[] GetPageItems(IndexItem[] stories, int page, int itemsPerPage)
+    {
+        if (page < 1)
+        {
+            return Array.Empty<IndexItem>();
+        }
+        return stories
+            .Skip((page - 1) * itemsPerPage)
+            .Take(itemsPerPage)
+            .ToArray();
     }
 
     static int GetHighestPage(int storiesLength, int itemsPerPage) => (storiesLength + itemsPerPage - 1) / itemsPerPage;
@@ -63,4 +129,6 @@
         _ => (page - 1).ToString(),
     };
     string? GetNextUrl(int pageAsInt, int lastPage) => pageAsInt == lastPage ? null : (pageAsInt + 1).ToString();
+
+    record LoadedIndexItem(int Ordinal, Item Story);
 }

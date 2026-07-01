@@ -25,9 +25,14 @@
     }
     @if (kids is not null)
     {
-        @foreach (var kid in kids)
+        @foreach (var comment in VisibleComments())
         {
-            <Comment Indent="0" Id=@kid />
+            <Comment CommentItem=comment.Item
+                     Indent=comment.Indent
+                     IsExpanded=@(!collapsed.Contains(comment.Item.Id))
+                     MoreCount=@GetKnownDescendantCount(comment.Item.Id)
+                     OnToggle=ToggleComment
+                     @key=comment.Item.Id />
         }
     }
 }
@@ -36,6 +41,13 @@
     [Parameter] public int? Id { get; set; }
     Item? story;
     int[]? kids;
+    int commentLoadVersion;
+    List<CommentNode> comments = new();
+    CommentNode[] commentSnapshot = Array.Empty<CommentNode>();
+    HashSet<int> collapsed = new();
+    HashSet<int> counting = new();
+    Dictionary<int, int> descendantCounts = new();
+
     protected override async Task OnParametersSetAsync()
     {
         if (Id is null)
@@ -43,18 +55,196 @@
             errorState.SetError(true,resetUrl:true);
             return;
         }
+        var id = Id.Value;
+        var version = ++commentLoadVersion;
+        story = null;
         kids = null;
-        story = await rest.GetItem(Id.Value);
+        comments.Clear();
+        commentSnapshot = Array.Empty<CommentNode>();
+        collapsed.Clear();
+        counting.Clear();
+        descendantCounts.Clear();
+        navigationService.SetUrls(null, null);
+
+        var storyTask = rest.GetItem(id);
+        var storiesTask = topStoriesCache.Get();
+
+        story = await storyTask;
+        if (Id != id)
+        {
+            return;
+        }
         kids = story?.Kids;
         if (story is null)
         {
             errorState.SetError(true,resetUrl:true);
             return;
         }
-        var stories = await topStoriesCache.Get();
-        var index = Array.FindIndex(stories!, item => item.Id == Id);
-        var previous = index <= 0 ? null : $"story/{stories![index - 1].Id}";
-        var next = index == -1 || index == stories!.Length - 1 ? null : $"story/{stories[index + 1].Id}";
+        if (kids is not null)
+        {
+            rest.PrefetchItems(kids);
+            _ = LoadComments(kids, 0, version, "");
+        }
+        StateHasChanged();
+
+        var stories = await storiesTask;
+        if (Id != id || stories is null)
+        {
+            return;
+        }
+        var index = Array.FindIndex(stories, item => item.Id == id);
+        var previous = index <= 0 ? null : $"story/{stories[index - 1].Id}";
+        var next = index == -1 || index == stories.Length - 1 ? null : $"story/{stories[index + 1].Id}";
         navigationService.SetUrls(previous, next);
+        if (index > 0)
+        {
+            rest.PrefetchItems(new[] { stories[index - 1].Id });
+        }
+        if (index != -1 && index < stories.Length - 1)
+        {
+            rest.PrefetchItems(new[] { stories[index + 1].Id });
+        }
     }
+
+    async Task LoadComments(int[] ids, int indent, int version, string path)
+    {
+        rest.PrefetchItems(ids);
+        var tasks = ids.Select(rest.GetItem).ToArray();
+        for (var i = 0; i < tasks.Length; i++)
+        {
+            if (version != commentLoadVersion)
+            {
+                return;
+            }
+            var comment = await tasks[i];
+            if (version != commentLoadVersion)
+            {
+                return;
+            }
+            if (comment?.Text is null)
+            {
+                continue;
+            }
+            var commentPath = $"{path}{i:D4}.";
+            AddComment(new(comment, indent, commentPath));
+            if (comment.Kids is not null)
+            {
+                collapsed.Add(comment.Id);
+                rest.PrefetchItems(comment.Kids);
+                if (indent == 0 && i < 5)
+                {
+                    StartCount(comment);
+                }
+                _ = LoadComments(comment.Kids, indent + 1, version, commentPath);
+            }
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    IEnumerable<CommentNode> VisibleComments()
+    {
+        var hiddenIndent = int.MaxValue;
+        foreach (var comment in OrderedComments())
+        {
+            if (comment.Indent > hiddenIndent)
+            {
+                continue;
+            }
+            hiddenIndent = int.MaxValue;
+            yield return comment;
+            if (collapsed.Contains(comment.Item.Id))
+            {
+                hiddenIndent = comment.Indent;
+            }
+        }
+    }
+
+    int? GetKnownDescendantCount(int id) => descendantCounts.TryGetValue(id, out var count) ? count : null;
+
+    IEnumerable<CommentNode> OrderedComments() => commentSnapshot;
+
+    void AddComment(CommentNode comment)
+    {
+        comments.Add(comment);
+        commentSnapshot = comments.OrderBy(comment => comment.Path).ToArray();
+    }
+
+    async Task<int> CountDescendants(int id, int[] kids, int version)
+    {
+        if (descendantCounts.TryGetValue(id, out var knownCount))
+        {
+            return knownCount;
+        }
+        var count = 0;
+        rest.PrefetchItems(kids);
+        foreach (var kid in kids)
+        {
+            if (version != commentLoadVersion)
+            {
+                return count;
+            }
+            var item = await rest.GetItem(kid);
+            if (version != commentLoadVersion)
+            {
+                return count;
+            }
+            if (item?.Text is null)
+            {
+                continue;
+            }
+            count++;
+            if (item.Kids is not null)
+            {
+                count += await CountDescendants(item.Id, item.Kids, version);
+            }
+        }
+        if (version == commentLoadVersion)
+        {
+            descendantCounts[id] = count;
+            counting.Remove(id);
+            await InvokeAsync(StateHasChanged);
+        }
+        return count;
+    }
+
+    void ToggleComment(int id)
+    {
+        if (collapsed.Remove(id))
+        {
+            StartVisibleChildCounts(id);
+            return;
+        }
+        collapsed.Add(id);
+    }
+
+    void StartVisibleChildCounts(int id)
+    {
+        var opened = comments.FirstOrDefault(comment => comment.Item.Id == id);
+        if (opened is null)
+        {
+            return;
+        }
+        var ordered = commentSnapshot;
+        var index = Array.IndexOf(ordered, opened);
+        for (var i = index + 1; i < ordered.Length && ordered[i].Indent > opened.Indent; i++)
+        {
+            var child = ordered[i];
+            if (child.Indent != opened.Indent + 1 || !collapsed.Contains(child.Item.Id))
+            {
+                continue;
+            }
+            StartCount(child.Item);
+        }
+    }
+
+    void StartCount(Item item)
+    {
+        if (item.Kids is null || descendantCounts.ContainsKey(item.Id) || !counting.Add(item.Id))
+        {
+            return;
+        }
+        _ = CountDescendants(item.Id, item.Kids, commentLoadVersion);
+    }
+
+    record CommentNode(Item Item, int Indent, string Path);
 }
