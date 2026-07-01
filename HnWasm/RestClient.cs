@@ -5,13 +5,11 @@ namespace HnWasm;
 internal class RestClient
 {
     readonly HttpClient client;
-    readonly ErrorState errorState;
-    readonly Dictionary<int, Task<Item?>> itemTasks = new();
+    readonly Dictionary<int, Task<ItemFetch>> itemTasks = new();
 
-    public RestClient(HttpClient client, ErrorState errorState)
+    public RestClient(HttpClient client)
     {
         this.client = client;
-        this.errorState = errorState;
     }
 
     public async Task<int[]?> GetTopStories()
@@ -27,18 +25,17 @@ internal class RestClient
         }
         catch
         {
-            errorState.SetError(true);
             return null;
         }
     }
 
-    public Task<Item?> GetItem(int id) => GetItem(id, reportError: true);
+    public async Task<Item?> GetItem(int id) => (await GetItemFetch(id)).Item;
 
-    Task<Item?> GetItem(int id, bool reportError)
+    public Task<ItemFetch> GetItemFetch(int id)
     {
         if (!itemTasks.TryGetValue(id, out var task))
         {
-            task = FetchItem(id, reportError);
+            task = FetchItem(id);
             itemTasks[id] = task;
         }
         return task;
@@ -48,29 +45,27 @@ internal class RestClient
     {
         foreach (var id in ids)
         {
-            _ = GetItem(id, reportError: false);
+            _ = GetItem(id);
         }
     }
 
-    async Task<Item?> FetchItem(int id, bool reportError)
+    async Task<ItemFetch> FetchItem(int id)
     {
         try
         {
-            return await client.GetFromJsonAsync<Item>($"item/{id}.json");
+            return new(await client.GetFromJsonAsync<Item>($"item/{id}.json"), Failed: false);
         }
         catch (OperationCanceledException)
         {
             itemTasks.Remove(id);
-            return null;
+            return new(null, Failed: true);
         }
         catch
         {
             itemTasks.Remove(id);
-            if (reportError)
-            {
-                errorState.SetError(true);
-            }
-            return null;
+            return new(null, Failed: true);
         }
     }
 }
+
+internal record ItemFetch(Item? Item, bool Failed);

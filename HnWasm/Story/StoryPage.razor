@@ -66,14 +66,19 @@
         descendantCounts.Clear();
         navigationService.SetUrls(null, null);
 
-        var storyTask = rest.GetItem(id);
+        var storyTask = rest.GetItemFetch(id);
         var storiesTask = topStoriesCache.Get();
 
-        story = await storyTask;
+        var storyFetch = await storyTask;
         if (Id != id)
         {
             return;
         }
+        if (storyFetch.Failed)
+        {
+            return;
+        }
+        story = storyFetch.Item;
         kids = story?.Kids;
         if (story is null)
         {
