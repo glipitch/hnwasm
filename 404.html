@@ -7,6 +7,10 @@
             opacity: 0;
             display: none;
         }
+
+        html.unloading #blazor-error-ui {
+            display: none !important;
+        }
     </style>
     <meta charset="utf-8" />
     <meta name="referrer" content="origin">
@@ -21,6 +25,8 @@
     <script>
         setThemeData = value => document.documentElement.dataset.theme = value;
         setThemeData(localStorage.getItem("theme") == "light" ? "light" : "dark");
+        addEventListener("beforeunload", () => document.documentElement.classList.add("unloading"));
+        addEventListener("pagehide", () => document.documentElement.classList.add("unloading"));
     </script>
 </head>
 <body>
