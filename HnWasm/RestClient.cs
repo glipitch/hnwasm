@@ -21,6 +21,10 @@ internal class RestClient
             var result = await client.GetFromJsonAsync<int[]>("topstories.json");
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
         catch
         {
             errorState.SetError(true);
@@ -28,11 +32,13 @@ internal class RestClient
         }
     }
 
-    public Task<Item?> GetItem(int id)
+    public Task<Item?> GetItem(int id) => GetItem(id, reportError: true);
+
+    Task<Item?> GetItem(int id, bool reportError)
     {
         if (!itemTasks.TryGetValue(id, out var task))
         {
-            task = FetchItem(id);
+            task = FetchItem(id, reportError);
             itemTasks[id] = task;
         }
         return task;
@@ -42,20 +48,28 @@ internal class RestClient
     {
         foreach (var id in ids)
         {
-            _ = GetItem(id);
+            _ = GetItem(id, reportError: false);
         }
     }
 
-    async Task<Item?> FetchItem(int id)
+    async Task<Item?> FetchItem(int id, bool reportError)
     {
         try
         {
             return await client.GetFromJsonAsync<Item>($"item/{id}.json");
         }
+        catch (OperationCanceledException)
+        {
+            itemTasks.Remove(id);
+            return null;
+        }
         catch
         {
             itemTasks.Remove(id);
-            errorState.SetError(true);
+            if (reportError)
+            {
+                errorState.SetError(true);
+            }
             return null;
         }
     }
