@@ -196,8 +196,10 @@ button[b-borjx9gxfq] {
         text of the story if present
     */
     color: var(--secondary-text-color);
-    display: inline-block;
+    display: block;
     margin-top: var(--large-gap);
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
     .markup[b-lfg58iq8z1]  a:link {
@@ -206,6 +208,14 @@ button[b-borjx9gxfq] {
 
     .markup[b-lfg58iq8z1]  a:visited {
         color: var(--secondary-text-color);
+    }
+
+    .markup[b-lfg58iq8z1]  pre {
+        max-width: 100%;
+        overflow: auto;
+        padding: var(--small-gap);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 
 .title[b-lfg58iq8z1] {
