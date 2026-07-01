@@ -5,8 +5,10 @@
         text of the story if present
     */
     color: var(--secondary-text-color);
-    display: inline-block;
+    display: block;
     margin-top: var(--large-gap);
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
     .markup ::deep a:link {
@@ -15,6 +17,14 @@
 
     .markup ::deep a:visited {
         color: var(--secondary-text-color);
+    }
+
+    .markup ::deep pre {
+        max-width: 100%;
+        overflow: auto;
+        padding: var(--small-gap);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 
 .title {
