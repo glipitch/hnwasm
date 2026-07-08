@@ -1,7 +1,10 @@
 @page "/story/{Id:int?}"
 @page "/story/{Anything}"
+@using Microsoft.JSInterop
 @using HnWasm.Navigation
 @using HnWasm.TopStories
+@implements IAsyncDisposable
+@inject IJSRuntime js
 @inject NavigationService navigationService
 @inject TopStoriesCache topStoriesCache;
 @inject RestClient rest;
@@ -47,6 +50,9 @@
     HashSet<int> collapsed = new();
     HashSet<int> counting = new();
     Dictionary<int, int> descendantCounts = new();
+    IJSObjectReference? jsmodule;
+    int? pendingScrollOpenedId;
+    int? pendingScrollTargetId;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -64,6 +70,8 @@
         collapsed.Clear();
         counting.Clear();
         descendantCounts.Clear();
+        pendingScrollOpenedId = null;
+        pendingScrollTargetId = null;
         navigationService.SetUrls(null, null);
 
         var storyTask = rest.GetItemFetch(id);
@@ -108,6 +116,22 @@
         if (index != -1 && index < stories.Length - 1)
         {
             rest.PrefetchItems(new[] { stories[index + 1].Id });
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            jsmodule = await js.InvokeAsync<IJSObjectReference>("import", "./Story/StoryPage.razor.js");
+        }
+
+        if (pendingScrollTargetId is not null && jsmodule is not null)
+        {
+            var targetId = pendingScrollTargetId.Value;
+            pendingScrollOpenedId = null;
+            pendingScrollTargetId = null;
+            await jsmodule.InvokeVoidAsync("revealComment", CommentElementId(targetId));
         }
     }
 
@@ -172,6 +196,7 @@
     {
         comments.Add(comment);
         commentSnapshot = comments.OrderBy(comment => comment.Path).ToArray();
+        QueueScrollIfPendingChildArrived(comment);
     }
 
     async Task<int> CountDescendants(int id, int[] kids, int version)
@@ -217,9 +242,60 @@
         if (collapsed.Remove(id))
         {
             StartVisibleChildCounts(id);
+            QueueOpenedCommentScroll(id);
             return;
         }
         collapsed.Add(id);
+        if (pendingScrollOpenedId == id)
+        {
+            pendingScrollOpenedId = null;
+            pendingScrollTargetId = null;
+        }
+    }
+
+    void QueueOpenedCommentScroll(int id)
+    {
+        pendingScrollOpenedId = id;
+        pendingScrollTargetId = GetFirstVisibleChildId(id);
+    }
+
+    int? GetFirstVisibleChildId(int id)
+    {
+        var opened = comments.FirstOrDefault(comment => comment.Item.Id == id);
+        if (opened is null)
+        {
+            return null;
+        }
+
+        var ordered = commentSnapshot;
+        var index = Array.IndexOf(ordered, opened);
+        for (var i = index + 1; i < ordered.Length && ordered[i].Indent > opened.Indent; i++)
+        {
+            if (ordered[i].Indent == opened.Indent + 1)
+            {
+                return ordered[i].Item.Id;
+            }
+        }
+        return null;
+    }
+
+    void QueueScrollIfPendingChildArrived(CommentNode comment)
+    {
+        if (pendingScrollOpenedId is null || pendingScrollTargetId is not null)
+        {
+            return;
+        }
+
+        var opened = comments.FirstOrDefault(item => item.Item.Id == pendingScrollOpenedId.Value);
+        if (opened is null)
+        {
+            return;
+        }
+
+        if (comment.Indent == opened.Indent + 1 && comment.Path.StartsWith(opened.Path, StringComparison.Ordinal))
+        {
+            pendingScrollTargetId = comment.Item.Id;
+        }
     }
 
     void StartVisibleChildCounts(int id)
@@ -252,4 +328,14 @@
     }
 
     record CommentNode(Item Item, int Indent, string Path);
+
+    static string CommentElementId(int id) => $"comment-{id}";
+
+    public async ValueTask DisposeAsync()
+    {
+        if (jsmodule is not null)
+        {
+            await jsmodule.DisposeAsync();
+        }
+    }
 }

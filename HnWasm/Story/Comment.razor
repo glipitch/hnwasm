@@ -1,6 +1,6 @@
 @if (CommentItem.Text is not null)
 {
-    <div class="outer" style="margin-left: calc(@(Indent) * var(--indent-unit));">
+    <div id="@CommentElementId" class="outer" style="margin-left: calc(@(Indent) * var(--indent-unit));">
         <div class="heading small-text">
             @CommentItem.By
             @CommentItem.Time?.UnixToHuman() ago
@@ -22,6 +22,7 @@
     [Parameter] public EventCallback<int> OnToggle { get; set; }
 
     string MoreText => MoreCount is null ? "more" : $"{MoreCount} more";
+    string CommentElementId => $"comment-{CommentItem.Id}";
 
     Task Toggle() => OnToggle.InvokeAsync(CommentItem.Id);
 }
