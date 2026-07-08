@@ -35,6 +35,27 @@
     font-size: var(--large-text);
 }
 
+button {
+    color: var(--primary-text-color);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.url {
+    color: var(--secondary-text-color);
+    padding-left: var(--small-gap);
+}
+
+.info {
+    padding-top: var(--small-gap);
+    width: fit-content;
+    color: var(--secondary-text-color);
+    display: block;
+}
+
 body {
     background-color: var(--outer-background-color);
     margin: auto;

@@ -27,18 +27,6 @@ h2[b-geawl27nfz] {
 a:visited h2[b-geawl27nfz] {
     color: var(--secondary-text-color);
 }
-
-.url[b-geawl27nfz] {
-    color: var(--secondary-text-color);
-    padding-left: var(--small-gap);
-}
-
-.info[b-geawl27nfz] {
-    padding-top: var(--small-gap);
-    width: fit-content;
-    color: var(--secondary-text-color);
-    display: block;
-}
 /* /MainLayout.razor.rz.scp.css */
 header[b-c3lpln6389] {
     display: flex;
@@ -100,12 +88,14 @@ h1[b-c3lpln6389] {
 }
 
 .app-info[b-c3lpln6389] {
+    color: dimgray;
+    font-size: var(--small-text);
+    padding-top: var(--large-gap);
     text-align: center;
 }
 
-    .app-info > *[b-c3lpln6389] {
-        font-size: .5rem;
-        color: dimgray;
+    .app-info a[b-c3lpln6389] {
+        color: inherit;
     }
 /* /Navigation/NavigationButtons.razor.rz.scp.css */
 div[b-7j38ma5j5u] {
@@ -125,15 +115,6 @@ a[b-7j38ma5j5u] {
         text-decoration: none;
         color: var(--disabled-button-color);
     }
-/* /Settings/Length.razor.rz.scp.css */
-button[b-rxadvb3nnr] {
-    color: var(--primary-text-color);
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit
-}
 /* /Settings/Theme.razor.rz.scp.css */
 svg[b-borjx9gxfq] {
     cursor: pointer;
@@ -142,13 +123,6 @@ svg[b-borjx9gxfq] {
     fill-rule: evenodd;
     clip-rule: evenodd;
     vertical-align: middle;
-}
-
-button[b-borjx9gxfq] {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
 }
 
 .hidden[b-borjx9gxfq] {
@@ -232,15 +206,3 @@ h2[b-lfg58iq8z1] {
     h2 a:visited[b-lfg58iq8z1] {
         color: var(--secondary-text-color);
     }
-
-.url[b-lfg58iq8z1] {
-    color: var(--secondary-text-color);
-    padding-left: var(--small-gap);
-}
-
-.info[b-lfg58iq8z1] {
-    padding-top: var(--small-gap);
-    width: fit-content;
-    color: var(--secondary-text-color);
-    display: block;
-}
