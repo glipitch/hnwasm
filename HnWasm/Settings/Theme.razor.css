@@ -7,13 +7,6 @@
     vertical-align: middle;
 }
 
-button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
 .hidden {
     visibility: hidden;
 }

@@ -58,10 +58,12 @@ h1 {
 }
 
 .app-info {
+    color: dimgray;
+    font-size: var(--small-text);
+    padding-top: var(--large-gap);
     text-align: center;
 }
 
-    .app-info > * {
-        font-size: .5rem;
-        color: dimgray;
+    .app-info a {
+        color: inherit;
     }
