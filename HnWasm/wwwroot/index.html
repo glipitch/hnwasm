@@ -2,12 +2,6 @@
 <html lang="en">
 <head>
     <style>
-        html {
-            visibility: hidden;
-            opacity: 0;
-            display: none;
-        }
-
         html.unloading #blazor-error-ui {
             display: none !important;
         }
@@ -32,7 +26,12 @@
 </head>
 <body>
     <div id="app">
-        <span style="display: block; color: var(--primary-text-color);">Loading...</span>
+        <main class="reader-intro">
+            <h1>HN Wasm — Hacker News reader</h1>
+            <p>Browse top Hacker News stories and their discussions. Choose a light or dark theme, adjust the number of stories per page, and swipe between pages on mobile.</p>
+            <p>Loading stories… You can also visit <a href="https://news.ycombinator.com/">Hacker News</a>.</p>
+            <noscript><p>Enable JavaScript to use the interactive reader.</p></noscript>
+        </main>
     </div>
     <div id="blazor-error-ui">
         An unhandled error has occurred.

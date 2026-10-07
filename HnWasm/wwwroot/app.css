@@ -62,6 +62,13 @@ body {
     max-width: 60rem;
 }
 
+.reader-intro {
+    color: var(--primary-text-color);
+    padding: var(--large-gap);
+    font-size: var(--small-text);
+    line-height: 1.6;
+}
+
 .no-line, .hover-line {
     text-decoration: none;
 }
